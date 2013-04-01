@@ -78,12 +78,13 @@ class Manager
 	}
 
 	/**
-	 * Check if access is allowed
+	 * Check if operation access is allowed
 	 * @param string $access
+	 * @param \Rbac\CollectionInterface $collection
 	 * @return bool
 	 */
-	public function checkAccess($access, UserOps $userOps)
+	public function checkAccess($access, CollectionInterface $collection)
 	{
-		return $userOps->checkAccess($access);
+		return $collection->isAllowed($access);
 	}
 }
