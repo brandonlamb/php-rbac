@@ -1,6 +1,10 @@
 <?php
 namespace Rbac;
 
+/**
+ * This class loads all allowed operations based on give identity,
+ * joining on the tables for roles and tasks.
+ */
 class UserOps
 {
 	/** @var int */
@@ -10,7 +14,7 @@ class UserOps
 	protected $ops;
 
 	/** @var string */
-	protected $cacheKey = 'rbac.user-ops.';
+	protected $cacheKey = 'Rbac.UserOps.identity.';
 
 	/** @var int */
 	protected $cacheTtl = 120;
