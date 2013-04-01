@@ -27,6 +27,9 @@ $ops = new \Rbac\Collection\Ops($manager, $user->id);
 // Create new tasks collection, passing the rbac manager and user identity
 $tasks = new \Rbac\Collection\Tasks($manager, $user->id);
 
+// Create new roles collection, passing the rbac manager and user identity
+$roles = new \Rbac\Collection\Roles($rbac, $user->id);
+
 // Allow access when srbac is in debug mode
 if ($manager->debug() === true) { return true; }
 
@@ -37,6 +40,11 @@ if (!$manager->isAllowed('default.contact.submit', $ops)) {
 
 // Check if access to task is allowed module@controller
 if (!$manager->isAllowed('default@contact', $tasks)) {
+	throw new \Exception('Not authorized to task');
+}
+
+// Check if access to role is allowed
+if (!$manager->isAllowed('members', $tasks)) {
 	throw new \Exception('Not authorized to task');
 }
 ```
