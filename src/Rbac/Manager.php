@@ -83,7 +83,7 @@ class Manager
 	 * @param \Rbac\CollectionInterface $collection
 	 * @return bool
 	 */
-	public function checkAccess($access, CollectionInterface $collection)
+	public function isAllowed($access, CollectionInterface $collection)
 	{
 		return $collection->isAllowed($access);
 	}
