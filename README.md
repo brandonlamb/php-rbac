@@ -7,15 +7,24 @@ Usage
 =====
 
 ```
-$rbac = new \Rbac\Manager($pdo);
-$rbac->setIdentity(123);
+// Create new rbac manager object
+$manager = new \Rbac\Manager($pdo);
+
+// Enable/disable debug mode
+$manager->debug(true);
 
 // Set cache object using CacheCache library
 $cache = $cacheManager->get('cacheMemcached');
-$rbac->setCache($cache);
+$manager->setCache($cache);
+
+// Create new UserOps object, passing the rbac manager and user identity
+$userOps = new \Rbac\UserOps($manager, $user->id);
+
+// Allow access when srbac is in debug mode
+if ($manager->debug() === true) { return true; }
 
 // module.controller.action (operation name)
-if (!$rbac->checkAccess('default.contact.submit')) {
+if (!$manager->checkAccess('default.contact.submit', $userOps)) {
 	throw new \Exception('Not authorized');
 }
 ```

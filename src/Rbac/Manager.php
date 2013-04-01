@@ -4,7 +4,7 @@ namespace Rbac;
 class Manager
 {
 	/** @var \Pdo */
-	protected $pdo;
+	protected $conn;
 
 	/** @var CacheCache\Cache */
 	protected $cache;
@@ -12,23 +12,28 @@ class Manager
 	/** @var bool */
 	protected $debug;
 
-	/** @var int */
-	protected $identity;
-
 	/** @var ops */
 	protected $ops;
 
-	/** @var string */
-	protected $cacheKey = 'rbac.user-ops.';
-
-	/** @var int */
-	protected $cacheTtl = 120;
-
-	public function __construct(\Pdo $pdo)
+	/**
+	 * Constructor
+	 * @param PDO $conn
+	 */
+	public function __construct(\Pdo $conn)
 	{
-		$this->pdo		= $pdo;
+		$this->conn		= $conn;
 		$this->debug	= false;
-		$this->identity	= 0;
+	}
+
+	/**
+	 * Get/set pdo connection
+	 * @param \PDO $conn
+	 * @return \PDO
+	 */
+	public function connection(\PDO $conn = null)
+	{
+		null !== $conn && $this->conn = $conn;
+		return $this->conn;
 	}
 
 	/**
@@ -40,26 +45,6 @@ class Manager
 	{
 		null !== $debug && $this->debug = (bool) $debug;
 		return (bool) $this->debug;
-	}
-
-	/**
-	 * Set user identity
-	 * @param int $identity
-	 * @return $this
-	 */
-	public function setIdentity($identity)
-	{
-		$this->identity = (int) $identity;
-		return $this;
-	}
-
-	/**
-	 * Get the user id
-	 * @return int
-	 */
-	public function getIdentity()
-	{
-		return (int) $this->identity;
 	}
 
 	/**
@@ -97,56 +82,8 @@ class Manager
 	 * @param string $access
 	 * @return bool
 	 */
-	public function checkAccess($access)
+	public function checkAccess($access, UserOps $userOps)
 	{
-		null === $this->ops && $this->ops = $this->getOps();
-		return isset($this->ops[$access]);
-	}
-
-	/**
-	 * Fetch all allowed operatations for user
-	 * @return array
-	 */
-	public function getOps()
-	{
-		// Get results from cache if they exist
-		$this->cache && $rows = $this->cache->get($this->cacheKey . $this->identity);
-		if (is_array($rows) && count($rows) > 0) {
-			return $this->parseOps($rows);
-		}
-
-		// Nothing found in cache, or cached array is empty, lookup from db
-		$sql = "SELECT DISTINCT ao.name AS op_name, ao.id AS op_id, ao.description AS op_desc
-FROM acl_op ao
-JOIN acl_task_op ato ON (ao.id = ato.op_id)
-JOIN acl_role_task art ON (ato.task_id = art.task_id)
-JOIN acl_role ar ON (ar.id = art.role_id)
-JOIN acl_user_role aur ON (aur.role_id = art.role_id)
-WHERE aur.user_id = ?
-ORDER BY op_name ASC";
-
-		$stmt = $this->pdo->prepare($sql);
-		$stmt->execute(array($this->identity));
-		$rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-		// Save to cache
-		$this->cache && $this->cache->set($this->cacheKey . $this->identity, $rows, $this->cacheTtl);
-
-		return $this->parseOps($rows);
-	}
-
-	/**
-	 * @param array $rows
-	 * @return array
-	 */
-	protected function parseOps(array $rows = array())
-	{
-		$ops = array();
-		foreach ($rows as $row) {
-			$op = new Op($row['op_id'], $row['op_name'], $row['op_desc']);
-			$ops[$op->name()] = $op;
-		}
-
-		return $ops;
+		return $userOps->checkAccess($access);
 	}
 }
