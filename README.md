@@ -44,8 +44,8 @@ if (!$manager->isAllowed('default@contact', $tasks)) {
 }
 
 // Check if access to role is allowed
-if (!$manager->isAllowed('members', $tasks)) {
-	throw new \Exception('Not authorized to task');
+if (!$manager->isAllowed('members', $roles)) {
+	throw new \Exception('Not authorized to role');
 }
 ```
 
