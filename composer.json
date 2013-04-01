@@ -1,0 +1,31 @@
+{
+	"name": "brandonlamb/php-rbac",
+	"version": "0.0.1",
+	"type": "library",
+	"description": "Role Based Access Control List Library",
+	"keywords": ["database", "rbac", "acl"],
+	"homepage": "https://github.com/brandonlamb/php-rbac",
+	"license" : "BSD",
+	"authors" : [
+		{
+			"name": "Brandon Lamb",
+			"email": "brandon@brandonlamb.com",
+			"homepage": "http://www.brandonlamb.com"
+		}
+	],
+	"autoload": {
+		"psr-0": {
+			"Rbac": "src/Rbac"
+		}
+	},
+	"require": {
+		"php": ">=5.3.2",
+		"brandonlamb/CacheCache" : ">=1.0.0"
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/brandonlamb/CacheCache"
+		}
+	]
+}
