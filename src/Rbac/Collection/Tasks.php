@@ -32,14 +32,14 @@ class Tasks extends AbstractCollection implements CollectionInterface
 		}
 
 		// Nothing found in cache, or cached array is empty, lookup from db
-		$sql = "SELECT DISTINCT at.name AS task_name, at.id AS task_id, at.description AS task_desc
+		$sql = "SELECT DISTINCT at.name AS item_name, at.id AS item_id, at.description AS item_desc
 FROM acl_task at
 JOIN acl_task_op ato ON (at.id = ato.task_id)
 JOIN acl_role_task art ON (ato.task_id = art.task_id)
 JOIN acl_role ar ON (ar.id = art.role_id)
 JOIN acl_user_role aur ON (aur.role_id = art.role_id)
 WHERE aur.user_id = ?
-ORDER BY task_name ASC";
+ORDER BY item_name ASC";
 
 		$stmt = $this->manager->connection()->prepare($sql);
 		$stmt->execute(array($this->identity));

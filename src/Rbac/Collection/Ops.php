@@ -32,14 +32,14 @@ class Ops extends AbstractCollection implements CollectionInterface
 		}
 
 		// Nothing found in cache, or cached array is empty, lookup from db
-		$sql = "SELECT DISTINCT ao.name AS op_name, ao.id AS op_id, ao.description AS op_desc
+		$sql = "SELECT DISTINCT ao.name AS item_name, ao.id AS item_id, ao.description AS item_desc
 FROM acl_op ao
 JOIN acl_task_op ato ON (ao.id = ato.op_id)
 JOIN acl_role_task art ON (ato.task_id = art.task_id)
 JOIN acl_role ar ON (ar.id = art.role_id)
 JOIN acl_user_role aur ON (aur.role_id = art.role_id)
 WHERE aur.user_id = ?
-ORDER BY op_name ASC";
+ORDER BY item_name ASC";
 
 		$stmt = $this->manager->connection()->prepare($sql);
 		$stmt->execute(array($this->identity));
