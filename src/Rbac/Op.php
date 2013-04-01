@@ -3,10 +3,21 @@ namespace Rbac;
 
 class Op
 {
+	/** @var int */
 	protected $id;
+
+	/** @var string */
 	protected $name;
+
+	/** @var string */
 	protected $description;
 
+	/**
+	 * Constructor
+	 * @param int $id
+	 * @param string $name
+	 * @param string $description
+	 */
 	public function __construct($id = 0, $name = null, $description = null)
 	{
 		$this->id($id);
