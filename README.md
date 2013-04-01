@@ -21,15 +21,23 @@ $manager->debug(true);
 $cache = $cacheManager->get('cacheMemcached');
 $manager->setCache($cache);
 
-// Create new UserOps object, passing the rbac manager and user identity
-$userOps = new \Rbac\UserOps($manager, $user->id);
+// Create new operations collection, passing the rbac manager and user identity
+$ops = new \Rbac\Collection\Ops($manager, $user->id);
+
+// Create new tasks collection, passing the rbac manager and user identity
+$tasks = new \Rbac\Collection\Tasks($manager, $user->id);
 
 // Allow access when srbac is in debug mode
 if ($manager->debug() === true) { return true; }
 
-// module.controller.action (operation name)
-if (!$manager->checkAccess('default.contact.submit', $userOps)) {
-	throw new \Exception('Not authorized');
+// Check if access to operation is allowed module.controller.action (operation name)
+if (!$manager->isAllowed('default.contact.submit', $ops)) {
+	throw new \Exception('Not authorized to operation');
+}
+
+// Check if access to task is allowed module@controller
+if (!$manager->isAllowed('default@contact', $tasks)) {
+	throw new \Exception('Not authorized to task');
 }
 ```
 
