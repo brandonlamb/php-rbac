@@ -46,4 +46,20 @@ ORDER BY item_name ASC";
 
 		return $this->parse(static::ITEM_CLASS, $rows);
 	}
+
+	/**
+	 * Add user id to array of roles
+	 * @param int $id
+	 * @param array $roles
+	 * @return bool
+	 */
+	public function addUser($id, array $roles)
+	{
+		$id = (int) $id;
+		foreach ($roles as $role) {
+			$sql = "INSERT INTO acl_user_role (user_id, role_id) VALUES(?, (SELECT id FROM acl_role WHERE name = ?))";
+			$stmt = $this->manager->connection()->prepare($sql);
+			$stmt->execute(array($id, $role));
+		}
+	}
 }

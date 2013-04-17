@@ -28,7 +28,7 @@ $ops = new \Rbac\Collection\Ops($manager, $user->id);
 $tasks = new \Rbac\Collection\Tasks($manager, $user->id);
 
 // Create new roles collection, passing the rbac manager and user identity
-$roles = new \Rbac\Collection\Roles($rbac, $user->id);
+$roles = new \Rbac\Collection\Roles($manager, $user->id);
 
 // Allow access when srbac is in debug mode
 if ($manager->debug() === true) { return true; }
@@ -47,6 +47,10 @@ if (!$manager->isAllowed('default@contact', $tasks)) {
 if (!$manager->isAllowed('members', $roles)) {
 	throw new \Exception('Not authorized to role');
 }
+
+// Add user to roles
+$roles = new \Rbac\Collection\Roles($manager);
+$roles->addUser($user->id, array('member', 'moderator'));
 ```
 
 Acl Operations
